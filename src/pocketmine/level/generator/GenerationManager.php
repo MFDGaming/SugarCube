@@ -215,7 +215,8 @@ class GenerationManager{
 	}
 
 	protected function readPacket(){
-		if(strlen($packet = $this->thread->readMainToThreadPacket()) > 0){
+        $packet = $this->thread->readMainToThreadPacket();
+		if($packet !== null && strlen($packet) > 0){
 			$pid = ord($packet[0]);
 			$offset = 1;
 			if($pid === self::PACKET_REQUEST_CHUNK){

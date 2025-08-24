@@ -32,17 +32,17 @@ class CompoundTag extends NamedTag implements \ArrayAccess{
 	 * @param NamedTag[] $value
 	 */
 	public function __construct($name = "", $value = []){
-		$this->name = $name;
+		parent::__construct($name);
 		foreach($value as $tag){
 			$this->{$tag->getName()} = $tag;
 		}
 	}
 
-	public function offsetExists($offset){
+	public function offsetExists($offset): bool{
 		return isset($this->{$offset});
 	}
 
-	public function offsetGet($offset){
+	public function offsetGet($offset): mixed{
 		if(isset($this->{$offset}) and $this->{$offset} instanceof Tag){
 			if($this->{$offset} instanceof \ArrayAccess){
 				return $this->{$offset};
@@ -54,7 +54,7 @@ class CompoundTag extends NamedTag implements \ArrayAccess{
 		return null;
 	}
 
-	public function offsetSet($offset, $value){
+	public function offsetSet($offset, $value): void{
 		if($value instanceof Tag){
 			$this->{$offset} = $value;
 		}elseif(isset($this->{$offset}) and $this->{$offset} instanceof Tag){
@@ -62,7 +62,7 @@ class CompoundTag extends NamedTag implements \ArrayAccess{
 		}
 	}
 
-	public function offsetUnset($offset){
+	public function offsetUnset($offset): void{
 		unset($this->{$offset});
 	}
 

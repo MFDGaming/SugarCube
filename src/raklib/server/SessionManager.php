@@ -104,7 +104,7 @@ class SessionManager{
             $max = 50000;
             while(--$max and $this->receivePacket());
 	        while($this->receiveStream());
-            usleep(max(1, 20000 - (microtime(true) - $start) * 1000000));
+            usleep((int)max(1, 20000 - (microtime(true) - $start) * 1000000));
         }
     }
 
@@ -180,7 +180,8 @@ class SessionManager{
     }
 
     public function receiveStream(){
-        if(strlen($packet = $this->server->readMainToThreadPacket()) > 0){
+        $packet = $this->server->readMainToThreadPacket();
+        if($packet !== null && strlen($packet) > 0){
             $id = ord($packet[0]);
             $offset = 1;
             if($id === RakLib::PACKET_ENCAPSULATED){

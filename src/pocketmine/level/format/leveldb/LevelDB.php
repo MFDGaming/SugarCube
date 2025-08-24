@@ -106,7 +106,7 @@ class LevelDB extends BaseLevelProvider{
 			"SpawnZ" => new IntTag("SpawnZ", 128),
 			"version" => new IntTag("version", 19133),
 			"DayTime" => new IntTag("DayTime", 0),
-			"LastPlayed" => new LongTag("LastPlayed", microtime(true) * 1000),
+			"LastPlayed" => new LongTag("LastPlayed", (int)(microtime(true) * 1000)),
 			"RandomSeed" => new LongTag("RandomSeed", $seed),
 			"SizeOnDisk" => new LongTag("SizeOnDisk", 0),
 			"Time" => new LongTag("Time", 0),

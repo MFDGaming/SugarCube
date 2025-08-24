@@ -31,14 +31,14 @@ abstract class NamedTag extends Tag{
 	 * @param bool|float|double|int|byte|short|array|Compound|Enum|string $value
 	 */
 	public function __construct($name = "", $value = false){
-		$this->name = $name;
+		$this->name = ($name === null or $name === false) ? "" : $name;
 		if($value !== false){
 			$this->value = $value;
 		}
 	}
 
 	public function getName(){
-		return $this->name === false ? "" : $this->name;
+		return $this->name;
 	}
 
 	public function setName($name){
