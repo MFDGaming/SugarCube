@@ -126,9 +126,8 @@ class RakLibInterface implements ServerInstance, SourceInterface{
 		if(!$this->rakLib->isTerminated()){
 			$this->interface->sendTick();
 		}else{
-			$info = $this->rakLib->getTerminationInfo();
 			$this->server->removeInterface($this);
-			\ExceptionHandler::handler(E_ERROR, "RakLib Thread crashed [".$info["scope"]."]: " . (isset($info["message"]) ? $info["message"] : ""), $info["file"], $info["line"]);
+			throw new \Exception("RakLib Thread crashed");
 		}
 	}
 
@@ -349,7 +348,7 @@ class RakLibInterface implements ServerInstance, SourceInterface{
 	}
 
 	private function getPacket($buffer){
-		$pid = ord($buffer{0});
+		$pid = ord($buffer[0]);
 
 		if(($data = $this->getPacketFromPool($pid)) === null){
 			$data = new UnknownPacket();

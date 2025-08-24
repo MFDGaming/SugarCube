@@ -224,10 +224,10 @@ class Utils{
 		static $lastRandom = "";
 		$output = "";
 		$length = abs((int) $length);
-		$secureValue = "";
+		$secureValue = 0;
 		$rounds = 0;
 		$drop = 0;
-		while(!isset($output{$length - 1})){
+		while(!isset($output[$length - 1])){
 			//some entropy, but works ^^
 			$weakEntropy = [
 				is_array($startEntropy) ? implode($startEntropy) : $startEntropy,
@@ -289,13 +289,13 @@ class Utils{
 				];
 				$strongEntropy = array_pop($strongEntropyValues);
 				foreach($strongEntropyValues as $value){
-					$strongEntropy = $strongEntropy ^ $value;
+					$strongEntropy ^= $value;
 				}
 				$value = "";
 				//Von Neumann randomness extractor, increases entropy
 				$bitcnt = 0;
 				for($j = 0; $j < 64; ++$j){
-					$a = ord($strongEntropy{$j});
+					$a = ord($strongEntropy[$j]);
 					for($i = 0; $i < 8; $i += 2){
 						$b = ($a & (1 << $i)) > 0 ? 1 : 0;
 						if($b != (($a & (1 << ($i + 1))) > 0 ? 1 : 0)){

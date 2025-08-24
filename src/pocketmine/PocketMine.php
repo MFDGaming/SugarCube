@@ -27,14 +27,14 @@ namespace {
 				case is_array($var):
 					echo str_repeat("  ", $cnt) . "array(" . count($var) . ") {" . PHP_EOL;
 					foreach($var as $key => $value){
-						echo str_repeat("  ", $cnt + 1) . "[" . (is_integer($key) ? $key : '"' . $key . '"') . "]=>" . PHP_EOL;
+						echo str_repeat("  ", $cnt + 1) . "[" . (is_int($key) ? $key : '"' . $key . '"') . "]=>" . PHP_EOL;
 						++$cnt;
 						safe_var_dump($value);
 						--$cnt;
 					}
 					echo str_repeat("  ", $cnt) . "}" . PHP_EOL;
 					break;
-				case is_integer($var):
+				case is_int($var):
 					echo str_repeat("  ", $cnt) . "int(" . $var . ")" . PHP_EOL;
 					break;
 				case is_float($var):
@@ -70,9 +70,9 @@ namespace pocketmine {
 	use pocketmine\utils\Utils;
 	use pocketmine\wizard\Installer;
 
-	const VERSION = "1.4.1";
+	const VERSION = "1.0dev";
 	const API_VERSION = "1.11.0";
-	const CODENAME = "絶好(Zekkou)ケーキ(Cake)";
+	const CODENAME = "甘い(Amai)クッキー(Cookie)";
 	const MINECRAFT_VERSION = "v0.10.5 alpha";
 
 	/*
@@ -332,7 +332,7 @@ namespace pocketmine {
 				}else{
 					$args = $trace[$i]["params"];
 				}
-				foreach($args as $name => $value){
+				foreach($args as $value){
 					$params .= (is_object($value) ? get_class($value) . " " . (method_exists($value, "__toString") ? $value->__toString() : "object") : gettype($value) . " " . (is_array($value) ? "Array()" : @strval($value))) . ", ";
 				}
 			}
@@ -374,10 +374,6 @@ namespace pocketmine {
 		++$errors;
 	}
 
-	if(!extension_loaded("uopz")){
-		//$logger->notice("Couldn't find the uopz extension. Some functions may be limited");
-	}
-
 	if(extension_loaded("pocketmine")){
 		if(version_compare(phpversion("pocketmine"), "0.0.1") < 0){
 			$logger->critical("You have the native PocketMine extension, but your version is lower than 0.0.1.");
@@ -386,11 +382,6 @@ namespace pocketmine {
 			$logger->critical("You have the native PocketMine extension, but your version is higher than 0.0.4.");
 			++$errors;
 		}
-	}
-
-	if(!extension_loaded("Weakref") and !extension_loaded("weakref")){
-		$logger->critical("Unable to find the Weakref extension.");
-		++$errors;
 	}
 
 	if(!extension_loaded("curl")){
@@ -443,26 +434,9 @@ namespace pocketmine {
 
 	$logger->info("Stopping other threads");
 
-	foreach(ThreadManager::getInstance()->getAll() as $id => $thread){
-		if($thread->isRunning()){
-			$logger->debug("Stopping " . (new \ReflectionClass($thread))->getShortName() . " thread");
-			if($thread instanceof Thread){
-				$thread->kill();
-				sleep(1);
-				if($thread->isRunning()){
-					$thread->detach();
-				}
-			}elseif($thread instanceof Worker){
-				$thread->kill();
-				sleep(1);
-				if($thread->isRunning()){
-					$thread->detach();
-				}
-			}
-		}elseif(!$thread->isJoined()){
-			$logger->debug("Joining " . (new \ReflectionClass($thread))->getShortName() . " thread");
-			$thread->join();
-		}
+	foreach(ThreadManager::getInstance()->getAll() as $thread){
+		$logger->debug("Stopping " . (new \ReflectionClass($thread))->getShortName() . " thread");
+		$thread->quit();
 	}
 
 	$logger->shutdown();

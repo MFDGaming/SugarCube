@@ -138,7 +138,7 @@ class EntityDamageEvent extends EntityEvent implements Cancellable{
 	 */
 	public function getFinalDamage(){
 		$damage = 0;
-		foreach($this->modifiers as $type => $d){
+		foreach($this->modifiers as $d){
 			$damage += $d;
 		}
 

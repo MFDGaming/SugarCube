@@ -216,7 +216,7 @@ class GenerationManager{
 
 	protected function readPacket(){
 		if(strlen($packet = $this->thread->readMainToThreadPacket()) > 0){
-			$pid = ord($packet{0});
+			$pid = ord($packet[0]);
 			$offset = 1;
 			if($pid === self::PACKET_REQUEST_CHUNK){
 				$levelID = Binary::readInt(substr($packet, $offset, 4));
@@ -228,7 +228,7 @@ class GenerationManager{
 			}elseif($pid === self::PACKET_SEND_CHUNK){
 				$levelID = Binary::readInt(substr($packet, $offset, 4));
 				$offset += 4;
-				$len = ord($packet{$offset++});
+				$len = ord($packet[$offset++]);
 				/** @var FullChunk $class */
 				$class = substr($packet, $offset, $len);
 				$offset += $len;
@@ -257,7 +257,7 @@ class GenerationManager{
 				$this->shutdown = true;
 			}
 		}elseif(count($this->thread->getInternalQueue()) === 0){
-			$this->thread->synchronized(function (){
+			$this->thread->synchronized(function (): void{
 				$this->thread->wait(50000);
 			});
 

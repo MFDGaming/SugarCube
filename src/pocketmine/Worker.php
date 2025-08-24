@@ -25,7 +25,8 @@ namespace pocketmine;
  * This class must be extended by all custom threading classes
  */
 abstract class Worker extends \Worker{
-
+	protected $isKilled = false;
+	
 	public function start($options = PTHREADS_INHERIT_ALL){
 		ThreadManager::getInstance()->add($this);
 
@@ -34,5 +35,23 @@ abstract class Worker extends \Worker{
 		}
 
 		return false;
+	}
+
+    public function quit(){
+		$this->isKilled = true;
+		
+		$this->notify();
+		
+		if($this->isRunning()){
+			$this->shutdown();
+			$this->notify();
+			$this->unstack();
+		}elseif(!$this->isJoined()){
+			if(!$this->isTerminated()){
+				$this->join();
+			}
+		}
+
+		ThreadManager::getInstance()->remove($this);
 	}
 }

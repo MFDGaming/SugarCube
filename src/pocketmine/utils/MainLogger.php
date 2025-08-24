@@ -49,7 +49,7 @@ class MainLogger extends \AttachableThreadedLogger{
 		$this->logFile = $logFile;
 		$this->hasANSI = (bool) $hasANSI;
 		$this->logDebug = (bool) $logDebug;
-		$this->logStream = "";
+		$this->logStream = new \Threaded;
 		$this->start(PTHREADS_INHERIT_NONE);
 	}
 
@@ -102,7 +102,7 @@ class MainLogger extends \AttachableThreadedLogger{
 		$this->logDebug = (bool) $logDebug;
 	}
 
-	public function logException(\Exception $e, $trace = null){
+	public function logException($e, $trace = null){
 		if($trace === null){
 			$trace = $e->getTrace();
 		}
@@ -140,7 +140,7 @@ class MainLogger extends \AttachableThreadedLogger{
 		}
 		$errfile = \pocketmine\cleanPath($errfile);
 		$this->log($type, get_class($e) . ": \"$errstr\" ($errno) in \"$errfile\" at line $errline");
-		foreach(@\pocketmine\getTrace(1, $trace) as $i => $line){
+		foreach(@\pocketmine\getTrace(1, $trace) as $line){
 			$this->debug($line);
 		}
 	}
@@ -193,7 +193,7 @@ class MainLogger extends \AttachableThreadedLogger{
 			$this->attachment->call($level, $message);
 		}
 
-		$this->logStream .= date("Y-m-d", $now) . " " . $cleanMessage;
+		$this->logStream[] = date("Y-m-d", $now) . " " . $cleanMessage;
 	}
 
 	public function run(){
@@ -204,19 +204,21 @@ class MainLogger extends \AttachableThreadedLogger{
 		}
 
 		while($this->shutdown === false){
-			if(strlen($this->logStream) > 0){
-				$this->lock();
-				$chunk = $this->logStream;
-				$this->logStream = "";
-				$this->unlock();
-				fwrite($this->logResource, $chunk);
-			}else{
-				usleep(250000);
-			}
-		}
+			$this->synchronized(function(): void{
+				while($this->logStream->count() > 0){
+					$chunk = $this->logStream->shift();
+					fwrite($this->logResource, $chunk);
+				}
 
-		if(strlen($this->logStream) > 0){
-			fwrite($this->logResource, $this->logStream);
+				$this->wait(25000);
+			});
+		}
+		
+		if($this->logStream->count() > 0){
+			while($this->logStream->count() > 0){
+				$chunk = $this->logStream->shift();
+				fwrite($this->logResource, $chunk);
+			}
 		}
 
 		fclose($this->logResource);

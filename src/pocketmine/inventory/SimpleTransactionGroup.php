@@ -92,7 +92,7 @@ class SimpleTransactionGroup implements TransactionGroup{
 	 * @return bool
 	 */
 	protected function matchItems(array &$needItems, array &$haveItems){
-		foreach($this->transactions as $key => $ts){
+		foreach($this->transactions as $ts){
 			if($ts->getTargetItem()->getId() !== Item::AIR){
 				$needItems[] = $ts->getTargetItem();
 			}

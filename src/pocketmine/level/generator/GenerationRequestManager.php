@@ -108,7 +108,7 @@ class GenerationRequestManager{
 
 	public function handlePackets(){
 		while(strlen($packet = $this->generationThread->readThreadToMainPacket()) > 0){
-			$pid = ord($packet{0});
+			$pid = ord($packet[0]);
 			$offset = 1;
 
 			if($pid === GenerationManager::PACKET_REQUEST_CHUNK){
@@ -121,7 +121,7 @@ class GenerationRequestManager{
 			}elseif($pid === GenerationManager::PACKET_SEND_CHUNK){
 				$levelID = Binary::readInt(substr($packet, $offset, 4));
 				$offset += 4;
-				$len = ord($packet{$offset++});
+				$len = ord($packet[$offset++]);
 				/** @var FullChunk $class */
 				$class = substr($packet, $offset, $len);
 				$offset += $len;

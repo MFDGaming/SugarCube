@@ -24,7 +24,7 @@ namespace pocketmine\level\format\generic;
 use pocketmine\entity\Entity;
 use pocketmine\level\format\FullChunk;
 use pocketmine\level\format\LevelProvider;
-use pocketmine\nbt\tag\Compound;
+use pocketmine\nbt\tag\CompoundTag;
 use pocketmine\Player;
 use pocketmine\tile\Tile;
 use pocketmine\utils\Binary;
@@ -79,8 +79,8 @@ abstract class BaseFullChunk implements FullChunk{
 	 * @param string        $biomeIds
 	 * @param int[]         $biomeColors
 	 * @param int[]         $heightMap
-	 * @param Compound[]    $entities
-	 * @param Compound[]    $tiles
+	 * @param CompoundTag[]    $entities
+	 * @param CompoundTag[]    $tiles
 	 */
 	protected function __construct($provider, $x, $z, $blocks, $data, $skyLight, $blockLight, $biomeIds = null, array $biomeColors = [], array $heightMap = [], array $entities = [], array $tiles = []){
 		$this->provider = $provider;
@@ -118,7 +118,7 @@ abstract class BaseFullChunk implements FullChunk{
 		if($this->getProvider() instanceof LevelProvider and $this->NBTentities !== null){
 			$this->getProvider()->getLevel()->timings->syncChunkLoadEntitiesTimer->startTiming();
 			foreach($this->NBTentities as $nbt){
-				if($nbt instanceof Compound){
+				if($nbt instanceof CompoundTag){
 					if(!isset($nbt->id)){
 						$this->setChanged();
 						continue;
@@ -141,7 +141,7 @@ abstract class BaseFullChunk implements FullChunk{
 
 			$this->getProvider()->getLevel()->timings->syncChunkLoadTileEntitiesTimer->startTiming();
 			foreach($this->NBTtiles as $nbt){
-				if($nbt instanceof Compound){
+				if($nbt instanceof CompoundTag){
 					if(!isset($nbt->id)){
 						$this->setChanged();
 						continue;
@@ -204,12 +204,12 @@ abstract class BaseFullChunk implements FullChunk{
 	}
 
 	public function getBiomeId($x, $z){
-		return ord($this->biomeIds{($z << 4) + $x});
+		return ord($this->biomeIds[($z << 4) + $x]);
 	}
 
 	public function setBiomeId($x, $z, $biomeId){
 		$this->hasChanged = true;
-		$this->biomeIds{($z << 4) + $x} = chr($biomeId);
+		$this->biomeIds[($z << 4) + $x] = chr($biomeId);
 	}
 
 	public function getBiomeColor($x, $z){
@@ -234,7 +234,7 @@ abstract class BaseFullChunk implements FullChunk{
 	public function getHighestBlockAt($x, $z){
 		$column = $this->getBlockIdColumn($x, $z);
 		for($y = 127; $y >= 0; --$y){
-			if($column{$y} !== "\x00"){
+			if($column[$y] !== "\x00"){
 				return $y;
 			}
 		}
