@@ -64,6 +64,9 @@ class SessionManager{
 
     protected $packetLimit = 1000;
 
+    protected $serverId;
+
+
     protected $shutdown = false;
 
     protected $ticks = 0;

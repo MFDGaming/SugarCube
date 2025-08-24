@@ -412,7 +412,7 @@ namespace pocketmine {
 	}
 
 	if(file_exists(\pocketmine\PATH . ".git/refs/heads/master")){ //Found Git information!
-		define("pocketmine\\GIT_COMMIT", strtolower(trim(file_get_contents(\pocketmine\PATH . ".git/refs/heads/master"))));
+		define("pocketmine\\GIT_COMMIT", strtolower(trim(file_get_contents(\pocketmine\PATH . ".git/refs/heads/main"))));
 	}else{ //Unknown :(
 		define("pocketmine\\GIT_COMMIT", str_repeat("00", 20));
 	}
