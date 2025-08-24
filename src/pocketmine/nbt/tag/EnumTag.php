@@ -31,7 +31,7 @@ class EnumTag extends NamedTag implements \ArrayAccess, \Countable{
 	private $tagType;
 
 	public function __construct($name = "", $value = []){
-		parent::__construct($name);
+		$this->name = $name;
 		foreach($value as $k => $v){
 			$this->{$k} = $v;
 		}

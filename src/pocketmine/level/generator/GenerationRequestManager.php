@@ -107,8 +107,12 @@ class GenerationRequestManager{
 	}
 
 	public function handlePackets(){
-        $packet = $this->generationThread->readThreadToMainPacket();
-		while($packet !== null && strlen($packet) > 0){
+        $packet = null;
+		while (true) {
+            $packet = $this->generationThread->readThreadToMainPacket();
+            if ($packet === null || strlen($packet) <= 0) {
+                break;
+            }
 			$pid = ord($packet[0]);
 			$offset = 1;
 

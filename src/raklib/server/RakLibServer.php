@@ -146,7 +146,7 @@ class RakLibServer extends \Thread{
 		}
 	}
 
-	public function errorHandler($errno = null, $errstr = null, $errfile = null, $errline = null, $context = null, $trace = null){
+	public function errorHandler($errno = 0, $errstr = "", $errfile = "", $errline = 0, $context = "", $trace = null){
 		if(error_reporting() === 0){
 			return false;
 		}
