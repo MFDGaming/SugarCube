@@ -601,8 +601,8 @@ class Level implements ChunkManager, Metadatable{
 		$randRange = $randRange > $this->chunkTickRadius ? $this->chunkTickRadius : $randRange;
 
 		foreach($this->players as $player){
-			$x = $player->x >> 4;
-			$z = $player->z >> 4;
+			$x = (int)$player->x >> 4;
+			$z = (int)$player->z >> 4;
 
 			$index = Level::chunkHash($x, $z);
 			$existingPlayers = max(0, isset($this->chunkTickList[$index]) ? $this->chunkTickList[$index] : 0);
@@ -1171,7 +1171,7 @@ class Level implements ChunkManager, Metadatable{
 	public function dropItem(Vector3 $source, Item $item, Vector3 $motion = null, $delay = 10){
 		$motion = $motion === null ? new Vector3(lcg_value() * 0.2 - 0.1, 0.2, lcg_value() * 0.2 - 0.1) : $motion;
 		if($item->getId() > 0 and $item->getCount() > 0){
-			$itemEntity = Entity::createEntity("Item", $this->getChunk($source->getX() >> 4, $source->getZ() >> 4), new CompoundTag("", [
+			$itemEntity = Entity::createEntity("Item", $this->getChunk((int)$source->getX() >> 4, (int)$source->getZ() >> 4), new CompoundTag("", [
 				"Pos" => new EnumTag("Pos", [
 					new DoubleTag("", $source->getX()),
 					new DoubleTag("", $source->getY()),

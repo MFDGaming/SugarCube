@@ -230,8 +230,8 @@ class Item extends Entity{
 		$pk->x = $this->x;
 		$pk->y = $this->y;
 		$pk->z = $this->z;
-		$pk->yaw = $this->yaw;
-		$pk->pitch = $this->pitch;
+		$pk->yaw = (int)$this->yaw;
+		$pk->pitch = (int)$this->pitch;
 		$pk->roll = 0;
 		$pk->item = $this->getItem();
 		$player->dataPacket($pk);

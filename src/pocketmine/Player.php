@@ -697,8 +697,8 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 		$newOrder = [];
 		$lastChunk = $this->usedChunks;
 		$currentQueue = [];
-		$centerX = $this->x >> 4;
-		$centerZ = $this->z >> 4;
+		$centerX = (int)$this->x >> 4;
+		$centerZ = (int)$this->z >> 4;
 		for($X = -$side; $X <= $side; ++$X){
 			for($Z = -$side; $Z <= $side; ++$Z){
 				$chunkX = $X + $centerX;
@@ -1511,7 +1511,7 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 
 				$nbt["lastPlayed"] = floor(microtime(true) * 1000);
 				$this->server->saveOfflinePlayerData($this->username, $nbt);
-				parent::__construct($this->level->getChunk($nbt["Pos"][0] >> 4, $nbt["Pos"][2] >> 4, true), $nbt);
+				parent::__construct($this->level->getChunk((int)$nbt["Pos"][0] >> 4, (int)$nbt["Pos"][2] >> 4, true), $nbt);
 				$this->loggedIn = true;
 
 				$this->server->getPluginManager()->callEvent($ev = new PlayerLoginEvent($this, "Plugin reason"));
@@ -1615,8 +1615,8 @@ class Player extends Human implements CommandSender, InventoryHolder, IPlayer{
 					$pk->teleport = true;
 					$this->directDataPacket($pk);
 				}else{
-					$packet->yaw %= 360;
-					$packet->pitch %= 360;
+                    $packet->yaw = fmod($packet->yaw, 360);
+                    $packet->pitch = fmod($packet->pitch, 360);
 
 					if($packet->yaw < 0){
 						$packet->yaw += 360;

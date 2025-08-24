@@ -1169,17 +1169,17 @@ abstract class Entity extends Location implements Metadatable{
 		$this->boundingBox->setBounds($pos->x - $radius, $pos->y, $pos->z - $radius, $pos->x + $radius, $pos->y + $this->height, $pos->z + $radius);
 
 
-		if($this->chunk === null or ($this->chunkX !== ($this->x >> 4) and $this->chunkZ !== ($this->z >> 4))){
+		if($this->chunk === null or ($this->chunkX !== ((int)$this->x >> 4) and $this->chunkZ !== ((int)$this->z >> 4))){
 			if($this->chunk !== null){
 				$this->chunk->removeEntity($this);
 			}
-			$this->level->loadChunk($this->x >> 4, $this->z >> 4);
-			$this->chunk = $this->level->getChunk($this->x >> 4, $this->z >> 4, true);
+			$this->level->loadChunk((int)$this->x >> 4, (int)$this->z >> 4);
+			$this->chunk = $this->level->getChunk((int)$this->x >> 4, (int)$this->z >> 4, true);
 			$this->chunkX = $this->chunk->getX();
 			$this->chunkZ = $this->chunk->getZ();
 
 			if(!$this->justCreated){
-				$newChunk = $this->level->getUsingChunk($this->x >> 4, $this->z >> 4);
+				$newChunk = $this->level->getUsingChunk((int)$this->x >> 4, (int)$this->z >> 4);
 				foreach($this->hasSpawned as $player){
 					if(!isset($newChunk[$player->getId()])){
 						$this->despawnFrom($player);
