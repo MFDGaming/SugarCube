@@ -27,11 +27,11 @@ class CommandReader extends Thread{
 	private $readline;
 	protected $shutdown = false;
 
-	/** @var \Threaded */
+	/** @var ThreadSafeArray */
 	protected $buffer;
 
 	/**
-	 * @param \Threaded $threaded
+	 * @param ThreadSafeArray $threaded
 	 */
 	public function __construct(){
 		$this->buffer = \ThreadedFactory::create();
@@ -70,7 +70,7 @@ class CommandReader extends Thread{
 		$this->shutdown = true;
 	}
 
-	public function run(){
+	public function run(): void{
 		$opts = getopt("", ["disable-readline"]);
 		if(extension_loaded("readline") and !isset($opts["disable-readline"])){
 			$this->readline = true;

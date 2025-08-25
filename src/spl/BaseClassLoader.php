@@ -15,7 +15,9 @@
  * GNU General Public License for more details.
 */
 
-class BaseClassLoader extends \Threaded implements ClassLoader{
+use pmmp\thread\ThreadSafe;
+
+class BaseClassLoader extends ThreadSafe implements ClassLoader{
 
     /** @var \ClassLoader */
     private $parent;

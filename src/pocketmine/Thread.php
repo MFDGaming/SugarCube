@@ -20,14 +20,15 @@
 */
 
 namespace pocketmine;
+use pmmp\thread\Thread as PMMPThread;
 
 /**
  * This class must be extended by all custom threading classes
  */
-abstract class Thread extends \Thread{
+abstract class Thread extends PMMPThread{
 	protected $isKilled = false;
 
-	public function start($options = PTHREADS_INHERIT_ALL){
+	public function start($options = PMMPThread::INHERIT_ALL): bool{
 		ThreadManager::getInstance()->add($this);
 
 		if(!$this->isRunning() and !$this->isJoined() and !$this->isTerminated()){

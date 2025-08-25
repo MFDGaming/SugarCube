@@ -23,6 +23,7 @@ namespace pocketmine\level\generator;
 
 
 use pocketmine\Thread;
+use pmmp\thread\ThreadSafeArray;
 
 class GenerationThread extends Thread{
 
@@ -32,20 +33,20 @@ class GenerationThread extends Thread{
 	/** @var \ThreadedLogger */
 	protected $logger;
 
-	/** @var \Threaded */
+	/** @var ThreadSafeArray */
 	protected $externalQueue;
-	/** @var \Threaded */
+	/** @var ThreadSafeArray */
 	protected $internalQueue;
 
 	/**
-	 * @return \Threaded
+	 * @return ThreadSafeArray
 	 */
 	public function getInternalQueue(){
 		return $this->internalQueue;
 	}
 
 	/**
-	 * @return \Threaded
+	 * @return ThreadSafeArray
 	 */
 	public function getExternalQueue(){
 		return $this->externalQueue;
@@ -82,7 +83,7 @@ class GenerationThread extends Thread{
 		$this->logger = $logger;
 		$loadPaths = [];
 		$this->addDependency($loadPaths, new \ReflectionClass($this->loader));
-		$this->loadPaths = array_reverse($loadPaths);
+		$this->loadPaths = ThreadSafeArray::fromArray(array_reverse($loadPaths));
 
 		$this->externalQueue = \ThreadedFactory::create();
 		$this->internalQueue = \ThreadedFactory::create();
@@ -104,7 +105,7 @@ class GenerationThread extends Thread{
 		}
 	}
 
-	public function run(){
+	public function run(): void{
 		error_reporting(-1);
 		gc_enable();
 		//Load removed dependencies, can't use require_once()

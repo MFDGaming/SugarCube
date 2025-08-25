@@ -15,7 +15,9 @@
  * GNU General Public License for more details.
 */
 
-abstract class ThreadedLoggerAttachment extends \Threaded implements \LoggerAttachment{
+use pmmp\thread\ThreadSafe;
+
+abstract class ThreadedLoggerAttachment extends ThreadSafe implements \LoggerAttachment{
 
     /** @var \ThreadedLoggerAttachment */
     protected $attachment = null;

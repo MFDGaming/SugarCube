@@ -22,6 +22,7 @@
 namespace pocketmine\scheduler;
 
 use pocketmine\Worker;
+use pmmp\thread\Thread;
 
 class AsyncWorker extends Worker{
 
@@ -31,7 +32,7 @@ class AsyncWorker extends Worker{
 		$this->loader = $loader;
 	}
 	
-	public function run(){
+	public function run(): void{
 		if(!interface_exists("ClassLoader", false)){
 			require(\pocketmine\PATH . "src/spl/ClassLoader.php");
 			require(\pocketmine\PATH . "src/spl/BaseClassLoader.php");
@@ -40,7 +41,7 @@ class AsyncWorker extends Worker{
 		$this->loader->register(true);
 	}
 
-	public function start($options = PTHREADS_INHERIT_NONE){
-		parent::start(PTHREADS_INHERIT_CONSTANTS | PTHREADS_INHERIT_FUNCTIONS);
+	public function start($options = Thread::INHERIT_NONE): bool{
+		return parent::start(Thread::INHERIT_CONSTANTS | Thread::INHERIT_FUNCTIONS);
 	}
 }

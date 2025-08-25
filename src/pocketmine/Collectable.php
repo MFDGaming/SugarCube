@@ -21,7 +21,9 @@
 
 namespace pocketmine;
 
-abstract class Collectable extends \Threaded{
+use pmmp\thread\Thread;
+
+abstract class Collectable extends Thread{
 
 	private $isGarbage = false;
 

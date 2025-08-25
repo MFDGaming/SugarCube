@@ -35,7 +35,7 @@ abstract class AsyncTask extends Collectable{
 	/** @var int */
 	private $taskId = null;
 
-	public function run(){
+	public function run(): void{
 		$this->result = null;
 
 		$this->onRun();

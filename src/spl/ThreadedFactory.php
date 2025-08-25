@@ -15,19 +15,21 @@
  * GNU General Public License for more details.
 */
 
+use pmmp\thread\ThreadSafeArray;
+
 abstract class ThreadedFactory{
 	protected static $threadedList = [];
 	
 	/**
-     * @return \Threaded
+     * @return \ThreadSafeArray
      */
 	public static function create(){
-		$threaded = new \Threaded;
+		$threaded = new ThreadSafeArray;
 		self::$threadedList[] = $threaded;
 		return $threaded;
 	}
 	
-	public static function destroy(\Threaded $threaded){
+	public static function destroy(ThreadSafeArray $threaded){
 		foreach(self::$threadedList as $i => $t){
 			if($t === $threaded){
 				unset(self::$threadedList[$i]);

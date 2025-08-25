@@ -20,8 +20,9 @@
 */
 
 namespace pocketmine;
+use pmmp\thread\ThreadSafe;
 
-class ThreadManager extends \Volatile{
+class ThreadManager extends ThreadSafe{
 
 	/** @var ThreadManager */
 	private static $instance = null;

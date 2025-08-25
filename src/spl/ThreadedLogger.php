@@ -15,6 +15,8 @@
  * GNU General Public License for more details.
 */
 
-abstract class ThreadedLogger extends \Thread implements Logger{
+use pmmp\thread\Thread;
+
+abstract class ThreadedLogger extends Thread implements Logger{
 
 }

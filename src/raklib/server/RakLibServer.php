@@ -15,8 +15,10 @@
 
 namespace raklib\server;
 
+use pmmp\thread\Thread;
+use pmmp\thread\ThreadSafeArray;
 
-class RakLibServer extends \Thread{
+class RakLibServer extends Thread{
     protected $port;
     protected $interface;
     /** @var \ThreadedLogger */
@@ -27,16 +29,16 @@ class RakLibServer extends \Thread{
 
     protected $shutdown;
 
-    /** @var \Threaded */
+    /** @var ThreadedSafeArray */
     protected $externalQueue;
-    /** @var \Threaded */
+    /** @var ThreadedSafeArray */
     protected $internalQueue;
 
 	protected $mainPath;
 
 	/**
-	 * @param \Threaded       $externalThreaded
-	 * @param \Threaded       $internalThreaded
+	 * @param ThreadSafeArray       $externalThreaded
+	 * @param ThreadSafeArray       $internalThreaded
 	 * @param \ThreadedLogger $logger
 	 * @param \ClassLoader    $loader
 	 * @param int             $port
@@ -56,7 +58,7 @@ class RakLibServer extends \Thread{
         $loadPaths = [];
         $this->addDependency($loadPaths, new \ReflectionClass($logger));
         $this->addDependency($loadPaths, new \ReflectionClass($loader));
-        $this->loadPaths = array_reverse($loadPaths);
+        $this->loadPaths = ThreadSafeArray::fromArray(array_reverse($loadPaths));
         $this->shutdown = false;
 
         $this->externalQueue = \ThreadedFactory::create();
@@ -68,7 +70,7 @@ class RakLibServer extends \Thread{
 		    $this->mainPath = \getcwd() . DIRECTORY_SEPARATOR;
 	    }
 
-        $this->start();
+        $this->start(Thread::INHERIT_ALL);
     }
 
     protected function addDependency(array &$loadPaths, \ReflectionClass $dep){
@@ -111,14 +113,14 @@ class RakLibServer extends \Thread{
     }
 
     /**
-     * @return \Threaded
+     * @return ThreadSafeArray
      */
     public function getExternalQueue(){
         return $this->externalQueue;
     }
 
     /**
-     * @return \Threaded
+     * @return ThreadSafeArray
      */
     public function getInternalQueue(){
         return $this->internalQueue;
@@ -217,7 +219,7 @@ class RakLibServer extends \Thread{
 		return rtrim(str_replace(["\\", ".php", "phar://", rtrim(str_replace(["\\", "phar://"], ["/", ""], $this->mainPath), "/")], ["/", "", "", ""], $path), "/");
 	}
 
-    public function run(){
+    public function run(): void{
         //Load removed dependencies, can't use require_once()
         foreach($this->loadPaths as $name => $path){
             if(!class_exists($name, false) and !interface_exists($name, false)){

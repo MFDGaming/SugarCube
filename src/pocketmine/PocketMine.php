@@ -88,8 +88,8 @@ namespace pocketmine {
 		@define("pocketmine\\PATH", \getcwd() . DIRECTORY_SEPARATOR);
 	}
 
-	if(!extension_loaded("pthreads")){
-		echo "[CRITICAL] Unable to find the pthreads extension." . PHP_EOL;
+	if(!extension_loaded("pmmpthread")){
+		echo "[CRITICAL] Unable to find the pmmpthread extension." . PHP_EOL;
 		echo "[CRITICAL] Please use the installer provided on the homepage." . PHP_EOL;
 		exit(1);
 	}
@@ -365,12 +365,8 @@ namespace pocketmine {
 		++$errors;
 	}
 
-	$pthreads_version = phpversion("pthreads");
-	if(substr_count($pthreads_version, ".") < 2){
-		$pthreads_version = "0.$pthreads_version";
-	}
-	if(version_compare($pthreads_version, "2.0.9") < 0){
-		$logger->critical("pthreads >= 2.0.9 is required, while you have $pthreads_version.");
+	if(version_compare(phpversion("pmmpthread"), "6.0.0") < 0){
+		$logger->critical("pmmpthread >= 6.0.0 is required");
 		++$errors;
 	}
 

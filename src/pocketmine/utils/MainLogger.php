@@ -22,6 +22,8 @@
 namespace pocketmine\utils;
 
 use LogLevel;
+use pmmp\thread\ThreadSafeArray;
+use pmmp\thread\Thread;
 
 class MainLogger extends \AttachableThreadedLogger{
 	protected $logFile;
@@ -29,7 +31,6 @@ class MainLogger extends \AttachableThreadedLogger{
 	protected $shutdown;
 	protected $hasANSI;
 	protected $logDebug;
-	private $logResource;
 	/** @var MainLogger */
 	public static $logger = null;
 
@@ -49,8 +50,8 @@ class MainLogger extends \AttachableThreadedLogger{
 		$this->logFile = $logFile;
 		$this->hasANSI = (bool) $hasANSI;
 		$this->logDebug = (bool) $logDebug;
-		$this->logStream = new \Threaded;
-		$this->start(PTHREADS_INHERIT_NONE);
+		$this->logStream = new ThreadSafeArray;
+		$this->start(Thread::INHERIT_NONE);
 	}
 
 	/**
@@ -196,31 +197,31 @@ class MainLogger extends \AttachableThreadedLogger{
 		$this->logStream[] = date("Y-m-d", $now) . " " . $cleanMessage;
 	}
 
-	public function run(){
+	public function run(): void{
 		$this->shutdown = false;
-		$this->logResource = fopen($this->logFile, "a+b");
-		if(!is_resource($this->logResource)){
+		$logResource = fopen($this->logFile, "a+b");
+		if(!is_resource($logResource)){
 			throw new \RuntimeException("Couldn't open log file");
 		}
 
 		while($this->shutdown === false){
-			$this->synchronized(function(): void{
+			$this->synchronized(function($lr): void{
 				while($this->logStream->count() > 0){
 					$chunk = $this->logStream->shift();
-					fwrite($this->logResource, $chunk);
+					fwrite($lr, $chunk);
 				}
 
 				$this->wait(25000);
-			});
+			}, $logResource);
 		}
 		
 		if($this->logStream->count() > 0){
 			while($this->logStream->count() > 0){
 				$chunk = $this->logStream->shift();
-				fwrite($this->logResource, $chunk);
+				fwrite($logResource, $chunk);
 			}
 		}
 
-		fclose($this->logResource);
+		fclose($logResource);
 	}
 }
