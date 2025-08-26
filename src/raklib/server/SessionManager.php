@@ -15,6 +15,7 @@
 
 namespace raklib\server;
 
+use pmmp\thread\Thread;
 use raklib\Binary;
 use raklib\protocol\ACK;
 use raklib\protocol\ADVERTISE_SYSTEM;
@@ -308,7 +309,7 @@ class SessionManager{
             if($timeout === -1){
                 $final = PHP_INT_MAX;
             }else{
-                $this->getLogger()->notice("[RakLib Thread #". \Thread::getCurrentThreadId() ."] Blocked $address for $timeout seconds");
+                $this->getLogger()->notice("[RakLib Thread #". Thread::getCurrentThreadId() ."] Blocked $address for $timeout seconds");
             }
             $this->block[$address] = $final;
         }elseif($this->block[$address] < $final){
